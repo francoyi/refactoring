@@ -1,3 +1,4 @@
+e8cfe34 Task 2.4: Finish the Removing the frmt Variable task and past the self-test.
 b544bb4 Task 2.3: Finish the Removing the frmt Variable task and past the self-test.
 9f316be Task 2.2: Finish the Extracting Volume Credits task and past the self-test.
 d250cc7 Task 2.1: Finish the task and past the self-test.
