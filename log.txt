@@ -1,3 +1,4 @@
+b544bb4 Task 2.3: Finish the Removing the frmt Variable task and past the self-test.
 9f316be Task 2.2: Finish the Extracting Volume Credits task and past the self-test.
 d250cc7 Task 2.1: Finish the task and past the self-test.
 0e8e6af Task 1.2: Update the commit history in log file

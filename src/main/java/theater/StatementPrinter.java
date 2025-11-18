@@ -30,29 +30,23 @@ public class StatementPrinter {
      * @throws RuntimeException if one of the play types is not known
      */
     public String statement() {
-        int totalAmount = 0;
-        int volumeCredits = 0;
-
         final StringBuilder statement =
                 new StringBuilder("Statement for " + invoice.getCustomer()
                         + System.lineSeparator());
 
+        // loop 1: build each performance line
         for (final Performance performance : invoice.getPerformances()) {
-            final int thisAmount = getAmount(performance);
             final Play play = getPlay(performance);
-
-            // add volume credits
-            volumeCredits += getVolumeCredits(performance, play);
-
-            // print line for this order
             statement.append(String.format(
                     "  %s: %s (%s seats)%n",
                     play.getName(),
-                    usd(thisAmount),
+                    usd(getAmount(performance)),
                     performance.getAudience()));
-
-            totalAmount += thisAmount;
         }
+
+        // queries for totals
+        final int totalAmount = getTotalAmount();
+        final int volumeCredits = getTotalVolumeCredits();
 
         statement.append(String.format(
                 "Amount owed is %s%n", usd(totalAmount)));
@@ -73,6 +67,33 @@ public class StatementPrinter {
                 NumberFormat.getCurrencyInstance(Locale.US);
         return formatter.format(
                 amount / (double) Constants.CENTS_PER_DOLLAR);
+    }
+
+    /**
+     * Computes the total volume credits for this invoice.
+     *
+     * @return total volume credits
+     */
+    private int getTotalVolumeCredits() {
+        int result = 0;
+        for (final Performance performance : invoice.getPerformances()) {
+            final Play play = getPlay(performance);
+            result += getVolumeCredits(performance, play);
+        }
+        return result;
+    }
+
+    /**
+     * Computes the total amount owed for this invoice.
+     *
+     * @return total amount in cents
+     */
+    private int getTotalAmount() {
+        int result = 0;
+        for (final Performance performance : invoice.getPerformances()) {
+            result += getAmount(performance);
+        }
+        return result;
     }
 
     /**
