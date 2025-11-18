@@ -1,0 +1,3 @@
+088d496 Task 1.1: fix style issues and clean up code and readme file
+add05be Task 1.1: fix style issues and clean up code
+6d9b2f6 Initial commit
