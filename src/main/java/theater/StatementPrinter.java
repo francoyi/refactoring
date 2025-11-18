@@ -37,9 +37,6 @@ public class StatementPrinter {
                 new StringBuilder("Statement for " + invoice.getCustomer()
                         + System.lineSeparator());
 
-        final NumberFormat frmt =
-                NumberFormat.getCurrencyInstance(Locale.US);
-
         for (final Performance performance : invoice.getPerformances()) {
             final int thisAmount = getAmount(performance);
             final Play play = getPlay(performance);
@@ -51,21 +48,31 @@ public class StatementPrinter {
             statement.append(String.format(
                     "  %s: %s (%s seats)%n",
                     play.getName(),
-                    frmt.format(thisAmount
-                            / (double) Constants.CENTS_PER_DOLLAR),
+                    usd(thisAmount),
                     performance.getAudience()));
 
             totalAmount += thisAmount;
         }
 
         statement.append(String.format(
-                "Amount owed is %s%n",
-                frmt.format(totalAmount
-                        / (double) Constants.CENTS_PER_DOLLAR)));
+                "Amount owed is %s%n", usd(totalAmount)));
         statement.append(String.format(
                 "You earned %s credits%n", volumeCredits));
 
         return statement.toString();
+    }
+
+    /**
+     * Formats the given amount (in cents) as a US dollar string.
+     *
+     * @param amount amount in cents
+     * @return formatted amount using US currency format
+     */
+    private String usd(int amount) {
+        final NumberFormat formatter =
+                NumberFormat.getCurrencyInstance(Locale.US);
+        return formatter.format(
+                amount / (double) Constants.CENTS_PER_DOLLAR);
     }
 
     /**
@@ -121,6 +128,7 @@ public class StatementPrinter {
                 amount += Constants.COMEDY_AMOUNT_PER_AUDIENCE
                         * performance.getAudience();
                 break;
+
             default:
                 throw new RuntimeException(
                         String.format("unknown type: %s", play.getType()));
