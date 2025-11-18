@@ -45,14 +45,7 @@ public class StatementPrinter {
             final Play play = getPlay(performance);
 
             // add volume credits
-            volumeCredits += Math.max(
-                    performance.getAudience()
-                            - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
-            // add extra credit for every five comedy attendees
-            if ("comedy".equals(play.getType())) {
-                volumeCredits += performance.getAudience()
-                        / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
-            }
+            volumeCredits += getVolumeCredits(performance, play);
 
             // print line for this order
             statement.append(String.format(
@@ -76,10 +69,32 @@ public class StatementPrinter {
     }
 
     /**
+     * Computes the volume credits earned for a single performance.
+     *
+     * @param performance the performance that was attended
+     * @param play        the play that was performed
+     * @return the number of credits earned for this performance
+     */
+    private int getVolumeCredits(Performance performance, Play play) {
+        int result = 0;
+
+        result += Math.max(
+                performance.getAudience()
+                        - Constants.BASE_VOLUME_CREDIT_THRESHOLD, 0);
+        if ("comedy".equals(play.getType())) {
+            result += performance.getAudience()
+                    / Constants.COMEDY_EXTRA_VOLUME_FACTOR;
+        }
+
+        return result;
+    }
+
+    /**
      * Computes the amount owed for a single performance.
      *
      * @param performance the performance to price
      * @return the calculated amount in cents
+     * @throws RuntimeException if the play type of the performance is unknown
      */
     private int getAmount(Performance performance) {
         final Play play = getPlay(performance);
@@ -106,7 +121,6 @@ public class StatementPrinter {
                 amount += Constants.COMEDY_AMOUNT_PER_AUDIENCE
                         * performance.getAudience();
                 break;
-
             default:
                 throw new RuntimeException(
                         String.format("unknown type: %s", play.getType()));
